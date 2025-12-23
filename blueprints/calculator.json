@@ -1,0 +1,5 @@
+{
+  "layout": ["Display", "ButtonGrid"],
+  "state": ["currentValue", "operator", "previousValue"],
+  "events": ["onNumber", "onOperator", "onEquals", "onClear"]
+}

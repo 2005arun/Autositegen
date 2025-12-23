@@ -1,0 +1,5 @@
+{
+  "layout": ["Navbar", "RestaurantList", "CartSidebar"],
+  "state": ["cartItems", "restaurants", "searchQuery"],
+  "events": ["addToCart", "removeFromCart", "onSearch"]
+}

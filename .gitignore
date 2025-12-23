@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Project specific
+generated-sites/
+.DS_Store

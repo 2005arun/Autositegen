@@ -1,0 +1,5 @@
+{
+  "layout": ["Header", "TodoInput", "TodoList", "TodoItem"],
+  "state": ["todos", "filter"],
+  "events": ["addTodo", "toggleTodo", "deleteTodo", "setFilter"]
+}
