@@ -1,0 +1,23 @@
+{
+  "app_type": "static_ui",
+  "features": [
+    "hero section with name",
+    "about section",
+    "skills section",
+    "projects section",
+    "contact section"
+  ],
+  "state": [],
+  "ui": [
+    "navigation bar",
+    "hero with background",
+    "section cards",
+    "footer"
+  ],
+  "forbidden": [
+    "authentication",
+    "charts",
+    "backend API",
+    "complex state management"
+  ]
+}

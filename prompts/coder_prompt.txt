@@ -34,6 +34,7 @@ CODE FORMAT RULE (CRITICAL):
 - Output JSX with proper indentation and line breaks
 - Do NOT compress JSX into one line
 - Each component must be multi-line and readable
+- Do NOT use single-line return for complex JSX
 
 UI RULE (MANDATORY):
 - Every JSX element must have Tailwind className

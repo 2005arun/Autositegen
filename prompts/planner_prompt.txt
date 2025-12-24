@@ -30,7 +30,7 @@ Required JSON format:
 {
   "app_name": "",
   "framework": "react",
-  "category": "logic-heavy | data-driven | static",
+  "category": "logic-heavy | data-driven | static-ui",
   "blueprint": "calculator | food_ordering | todo | custom",
   "functional_requirements": [
     "concrete requirement 1",

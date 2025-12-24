@@ -1,0 +1,32 @@
+{
+  "app_type": "crud_basic",
+  "features": [
+    "add expense with amount and category",
+    "list all expenses",
+    "delete expense",
+    "calculate total expenses"
+  ],
+  "state": [
+    "expenses (array)",
+    "amount (number)",
+    "category (string)"
+  ],
+  "ui": [
+    "expense form with amount and category inputs",
+    "expense list/table",
+    "total summary card"
+  ],
+  "forbidden": [
+    "authentication",
+    "charts",
+    "backend API",
+    "complex routing"
+  ],
+  "example_categories": [
+    "Food",
+    "Transport",
+    "Entertainment",
+    "Utilities",
+    "Other"
+  ]
+}

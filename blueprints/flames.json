@@ -1,0 +1,32 @@
+{
+  "app_type": "logic_basic",
+  "features": [
+    "two name input fields",
+    "calculate button",
+    "FLAMES algorithm implementation",
+    "result display"
+  ],
+  "state": [
+    "name1 (string)",
+    "name2 (string)",
+    "result (string)"
+  ],
+  "ui": [
+    "input form with two fields",
+    "calculate button",
+    "result card with relationship status"
+  ],
+  "forbidden": [
+    "authentication",
+    "charts",
+    "backend API"
+  ],
+  "flames_values": [
+    "Friendship",
+    "Love",
+    "Affection",
+    "Marriage",
+    "Enemy",
+    "Sibling"
+  ]
+}
