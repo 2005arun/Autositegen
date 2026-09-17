@@ -1,8 +1,10 @@
 import os
 import json
+import posixpath
+import re
 from langchain_core.messages import SystemMessage, HumanMessage
 from graph.state import AgentState
-from utils.llm_client import get_llm
+from utils.llm_client import CODING_MODEL, get_llm
 from utils.parser import extract_json
 
 # ============================================
@@ -88,7 +90,6 @@ def validator_agent(state: AgentState) -> AgentState:
                         "suggested_fixes": [f"Change {path} to use export default"]
                     }
                 }
-            # Syntax Check: Unmatched Braces
             if content.count("{") != content.count("}"):
                 print(f"Validation Failed: {path} has unmatched braces")
                 return {
@@ -99,6 +100,26 @@ def validator_agent(state: AgentState) -> AgentState:
                     }
                 }
 
+    # ============================================
+    # 2b. Check local component imports against generated files
+    # ============================================
+    generated_paths = {path.replace("\\", "/").lstrip("./") for path in code}
+    missing_imports = []
+    for path, content in code.items():
+        normalized_path = path.replace("\\", "/")
+        for imported in re.findall(r"from\s+['\"](\.{1,2}/[^'\"]+)['\"]", content):
+            base = posixpath.normpath(posixpath.join(posixpath.dirname(normalized_path), imported))
+            candidates = [base, *[f"{base}{extension}" for extension in (".jsx", ".tsx", ".js", ".ts")], f"{base}/index.jsx"]
+            if not any(candidate.lstrip("./") in generated_paths for candidate in candidates):
+                missing_imports.append(f"{path} imports missing local file {imported}")
+    if missing_imports:
+        return {
+            "validation": {
+                "status": "fail",
+                "issues": missing_imports,
+                "suggested_fixes": ["Generate the missing local component files or correct the import paths"],
+            }
+        }
     # ============================================
     # 3. Tailwind Usage (Always Required)
     # ============================================
@@ -172,7 +193,7 @@ def validator_agent(state: AgentState) -> AgentState:
     with open(prompt_path, "r") as f:
         system_prompt = f.read()
 
-    llm = get_llm()
+    llm = get_llm(CODING_MODEL)
     messages = [
         SystemMessage(content=system_prompt),
         HumanMessage(content=f"Project Plan: {json.dumps(plan, indent=2)}\n\nGenerated Code: {json.dumps(code, indent=2)}")

@@ -1,0 +1,8 @@
+import { Check, Circle, LoaderCircle, X } from 'lucide-react'
+
+const LABELS = { planner: 'Understanding your request', architect: 'Designing architecture', coder: 'Generating React components', validator: 'Validating generated code', building: 'Building website', preview: 'Starting live preview' }
+
+export default function AgentProgress({ job }) {
+  const stages = job?.stages || {}
+  return <section className="rounded-2xl border border-white/10 bg-panel p-5 sm:p-6"><div className="mb-5 flex items-center justify-between"><div><p className="mb-2 font-mono text-[10px] uppercase tracking-[.22em] text-accent">02 / Pipeline</p><h2 className="text-lg font-semibold">Generation progress</h2></div><span className="font-mono text-xs text-accent">{job?.progress || 0}%</span></div><div className="space-y-3">{Object.keys(LABELS).map((stage) => { const status = stages[stage] || 'pending'; const Icon = status === 'completed' ? Check : status === 'failed' ? X : status === 'running' ? LoaderCircle : Circle; return <div key={stage} className="flex items-center gap-3 text-sm"><Icon size={17} className={`${status === 'completed' ? 'text-accent' : status === 'failed' ? 'text-red-400' : status === 'running' ? 'animate-spin text-amber-300' : 'text-slate-700'}`} /><span className={status === 'pending' ? 'text-slate-600' : 'text-slate-300'}>{LABELS[stage]}</span>{status === 'running' && <span className="ml-auto font-mono text-[10px] uppercase text-amber-300">active</span>}</div> })}</div>{job?.detail && <p className="mt-5 border-t border-white/10 pt-4 text-xs text-slate-500">{job.detail}</p>}</section>
+}

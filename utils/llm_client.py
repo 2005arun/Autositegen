@@ -4,15 +4,19 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-def get_llm():
+PLANNING_MODEL = "openai/gpt-oss-20b"
+CODING_MODEL = "openai/gpt-oss-120b"
+
+
+def get_llm(model: str = CODING_MODEL):
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         print("Warning: GROQ_API_KEY not found in environment variables.")
     
-    # Added max_retries to handle rate limits automatically
     return ChatGroq(
-        model="llama-3.3-70b-versatile", 
+        model=model,
         temperature=0,
         max_retries=5,
-        request_timeout=60
+        request_timeout=60,
+        max_tokens=12000,
     )

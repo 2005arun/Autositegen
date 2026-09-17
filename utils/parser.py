@@ -7,28 +7,31 @@ def extract_json(text: str) -> dict:
     """
     text = text.strip()
     
-    # Try to find JSON block
-    match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
-    if match:
-        text = match.group(1)
-    else:
-        # Look for just { ... }
-        match = re.search(r"(\{.*\})", text, re.DOTALL)
-        if match:
-            text = match.group(1)
+    decoder = json.JSONDecoder()
+    candidates = [text]
+    if "```" in text:
+        for block in text.split("```")[1::2]:
+            block = block.strip()
+            block = re.sub(r"^(json|javascript|js)\s*\r?\n", "", block, flags=re.IGNORECASE)
+            candidates.append(block)
 
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        # Attempt to fix common JSON issues
-        # 1. Fix unescaped newlines in strings
-        # This is a naive fix and might not work for all cases
+    for candidate in candidates:
+        candidate = candidate.strip()
         try:
-            # Remove control characters
-            text = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', text)
-            return json.loads(text)
-        except:
+            value, _ = decoder.raw_decode(candidate)
+            if isinstance(value, dict):
+                return value
+        except json.JSONDecodeError:
             pass
-            
-        print(f"FAILED TO PARSE JSON. Raw text:\n{text}\n")
-        raise ValueError(f"Could not extract JSON from text.")
+
+        for index, character in enumerate(candidate):
+            if character != "{":
+                continue
+            try:
+                value, _ = decoder.raw_decode(candidate[index:])
+                if isinstance(value, dict):
+                    return value
+            except json.JSONDecodeError:
+                continue
+
+    raise ValueError("Could not extract a valid JSON object from model output.")

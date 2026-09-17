@@ -2,7 +2,7 @@ import os
 import json
 from langchain_core.messages import SystemMessage, HumanMessage
 from graph.state import AgentState
-from utils.llm_client import get_llm
+from utils.llm_client import PLANNING_MODEL, get_llm
 from utils.parser import extract_json
 
 def architect_agent(state: AgentState) -> AgentState:
@@ -13,7 +13,7 @@ def architect_agent(state: AgentState) -> AgentState:
 
     plan = state["plan"]
     
-    llm = get_llm()
+    llm = get_llm(PLANNING_MODEL)
     messages = [
         SystemMessage(content=system_prompt),
         HumanMessage(content=f"Project Plan: {json.dumps(plan, indent=2)}")

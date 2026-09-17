@@ -1,0 +1,11 @@
+import { ExternalLink, Maximize2, Monitor, Smartphone, Tablet } from 'lucide-react'
+import { useState } from 'react'
+
+const sizes = { desktop: { label: 'Desktop', icon: Monitor, width: 'w-full' }, tablet: { label: 'Tablet', icon: Tablet, width: 'w-[768px] max-w-full' }, mobile: { label: 'Mobile', icon: Smartphone, width: 'w-[390px] max-w-full' } }
+
+export default function PreviewPanel({ projectId, empty = false }) {
+  const [size, setSize] = useState('desktop')
+  const api = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  const url = projectId ? `${api}/preview/${projectId}` : ''
+  return <section className="flex min-h-[560px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-panel"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4"><div><p className="mb-1 font-mono text-[10px] uppercase tracking-[.22em] text-accent">03 / Preview</p><h2 className="text-lg font-semibold">Live preview</h2></div>{projectId && <div className="flex items-center gap-2"><div className="flex rounded-lg border border-white/10 p-1">{Object.entries(sizes).map(([key, item]) => { const Icon = item.icon; return <button key={key} title={item.label} onClick={() => setSize(key)} className={`rounded-md p-2 ${size === key ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'}`}><Icon size={15} /></button> })}</div><a href={url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 p-2 text-slate-400 hover:text-white" title="Open preview"><ExternalLink size={15} /></a></div>}</div><div className="grid-noise flex flex-1 items-center justify-center bg-ink/60 p-4 sm:p-7">{empty ? <div className="max-w-xs text-center"><Maximize2 className="mx-auto mb-4 text-slate-700" size={32} /><p className="text-sm font-medium text-slate-400">Your generated website will appear here</p><p className="mt-2 text-xs leading-5 text-slate-600">Describe an idea and let the agent pipeline turn it into a working interface.</p></div> : <div className={`h-[470px] overflow-hidden rounded-xl border border-white/10 bg-white shadow-2xl transition-all ${sizes[size].width}`}><iframe src={url} title="Generated website preview" className="h-full w-full border-0" /></div>}</div></section>
+}

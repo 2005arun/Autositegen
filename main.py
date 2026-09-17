@@ -174,3 +174,23 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# cd E:\BACKUP\Autosite\autositeiten
+# .\.venv\Scripts\Activate.ps1
+# python main.py "create a simple portfolio website with about, projects, and contact sections"
+
+# for CLI:
+# python main.py "create a simple portfolio website with about, projects, and contact sections"
+
+# for web access:
+# start the backend:
+# cd e:\BACKUP\Autosite\autositeiten\backend
+# uvicorn main:app --reload --port 8000
+
+# start the frontend:
+# cd e:\BACKUP\Autosite\autositeiten\frontend
+# npm run dev
+
+# open -> http://localhost:5173

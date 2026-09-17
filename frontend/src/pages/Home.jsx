@@ -1,0 +1,22 @@
+import axios from 'axios'
+import { AlertCircle, ArrowUpRight, Clock3, Download, FolderOpen } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import AgentProgress from '../components/AgentProgress.jsx'
+import PreviewPanel from '../components/PreviewPanel.jsx'
+import PromptInput from '../components/PromptInput.jsx'
+
+const api = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+export default function Home() {
+  const [prompt, setPrompt] = useState('')
+  const [job, setJob] = useState(null)
+  const [history, setHistory] = useState([])
+  const [error, setError] = useState('')
+  useEffect(() => { axios.get(`${api}/api/projects`).then((response) => setHistory(response.data)).catch(() => {}) }, [])
+  useEffect(() => { if (!job || ['completed', 'failed'].includes(job.status)) return undefined; const timer = setInterval(() => axios.get(`${api}/api/generate/${job.jobId}`).then((response) => { setJob(response.data); if (response.data.status === 'failed') setError(response.data.error || 'Website generation failed.') }).catch(() => setError('Could not read generation progress.')), 1500); return () => clearInterval(timer) }, [job])
+  useEffect(() => { if (job?.status !== 'completed') return; axios.get(`${api}/api/projects`).then((response) => setHistory(response.data)).catch(() => {}) }, [job?.status])
+  const generate = async () => { setError(''); setJob(null); try { const response = await axios.post(`${api}/api/generate`, { prompt }); setJob(response.data) } catch (requestError) { setError(requestError.response?.data?.detail || 'Could not start generation.') } }
+  const activeProject = job?.result
+  return <main className="mx-auto max-w-[1500px] px-5 py-8 lg:px-8 lg:py-12"><div className="mb-10 max-w-3xl"><p className="mb-4 font-mono text-xs uppercase tracking-[.25em] text-accent">AI website builder / v1</p><h1 className="text-4xl font-semibold tracking-[-.04em] sm:text-6xl">From a thought to a <span className="text-accent">working site.</span></h1><p className="mt-5 max-w-2xl text-base leading-7 text-slate-400">Describe what you want. AutoSiteGen plans, architects, codes, validates, and builds a real React application you can inspect and preview.</p></div><div className="grid gap-5 xl:grid-cols-[minmax(340px,440px)_1fr]"><div className="space-y-5"><PromptInput prompt={prompt} setPrompt={setPrompt} onGenerate={generate} loading={job && !['completed', 'failed'].includes(job.status)} />{job && <AgentProgress job={job} />}{error && <div className="flex gap-3 rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-200"><AlertCircle size={18} className="shrink-0" />{error}</div>}</div><PreviewPanel projectId={activeProject?.projectId} empty={!activeProject} /></div><section id="history" className="mt-16"><div className="mb-5 flex items-end justify-between"><div><p className="mb-2 font-mono text-[10px] uppercase tracking-[.22em] text-accent">Workspace</p><h2 className="text-2xl font-semibold">Recent projects</h2></div><span className="text-xs text-slate-600">{history.length} projects</span></div>{history.length ? <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">{history.map((project) => <article key={project.projectId} className="rounded-xl border border-white/10 bg-panel p-5 transition hover:border-accent/40"><div className="mb-7 flex items-start justify-between"><span className="rounded-lg bg-accent/10 p-2 text-accent"><FolderOpen size={17} /></span><span className="font-mono text-[10px] text-slate-600">{new Date(project.createdAt).toLocaleDateString()}</span></div><h3 className="truncate font-medium">{project.name}</h3><p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{project.prompt}</p><div className="mt-5 flex gap-2"><Link to={`/project/${project.projectId}`} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-xs text-slate-300 hover:bg-white/10 hover:text-white">Open <ArrowUpRight size={14} /></Link><a href={`${api}/api/projects/${project.projectId}/download`} className="rounded-lg border border-white/10 p-2 text-slate-500 hover:text-white" title="Download"><Download size={14} /></a></div></article>)}</div> : <div className="rounded-xl border border-dashed border-white/10 p-10 text-center text-sm text-slate-600"><Clock3 className="mx-auto mb-3" size={20} />Your generated projects will collect here.</div>}</section></main>
+}

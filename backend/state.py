@@ -1,6 +1,7 @@
-from typing import TypedDict, Dict, Any
+from typing import Any, Dict, TypedDict
 
-class AgentState(TypedDict):
+
+class AgentState(TypedDict, total=False):
     user_prompt: str
     plan: Dict[str, Any]
     architecture: Dict[str, Any]
