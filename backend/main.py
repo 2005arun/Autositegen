@@ -90,7 +90,7 @@ def run_generation(job_id: str, prompt: str) -> None:
             if failed_stage in job.get("stages", {}):
                 job["stages"][failed_stage] = "failed"
             message = str(exc)
-            if not is_quota_error(exc) and "quota" not in message.lower():
+            if not is_quota_error(exc) and "quota" not in message.lower() and not isinstance(exc, RuntimeError):
                 message = f"Generation failed during {failed_stage}. Please try again."
             job.update(
                 status="failed",

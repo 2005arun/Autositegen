@@ -34,9 +34,10 @@ def bootstrap_project(project_dir: Path) -> None:
 
 
 def build_project(project_dir: Path) -> None:
+    npm_command = "npm.cmd" if os.name == "nt" else "npm"
     commands = (
-        ["npm", "install", "--no-audit", "--no-fund"],
-        ["npm", "run", "build"],
+        [npm_command, "install", "--no-audit", "--no-fund"],
+        [npm_command, "run", "build"],
     )
     for command in commands:
         try:
@@ -49,7 +50,13 @@ def build_project(project_dir: Path) -> None:
                 text=True,
             )
         except subprocess.CalledProcessError as error:
-            raise RuntimeError(f"Build step failed: {command[1]}") from error
+            output = (error.stderr or error.stdout or "").strip()
+            detail = output[-2000:] if output else "No build output was returned."
+            raise RuntimeError(f"Build step failed: {command[1]}\n{detail}") from error
+        except FileNotFoundError as error:
+            raise RuntimeError(
+                "Node.js/npm is not installed on the backend host. Deploy the backend with the included Dockerfile."
+            ) from error
 
 
 def write_generated_files(project_dir: Path, files: dict[str, str]) -> None:
