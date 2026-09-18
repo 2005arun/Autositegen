@@ -36,7 +36,7 @@ def bootstrap_project(project_dir: Path) -> None:
 def build_project(project_dir: Path) -> None:
     npm_command = "npm.cmd" if os.name == "nt" else "npm"
     commands = (
-        [npm_command, "install", "--no-audit", "--no-fund"],
+        [npm_command, "install", "--include=dev", "--no-audit", "--no-fund"],
         [npm_command, "run", "build"],
     )
     for command in commands:
